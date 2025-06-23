@@ -19,6 +19,6 @@
 
 ---
 
-For a full example, see the [example folder](src/CodeTalker/Examples) in the repo.
+For a full example, see the [example folder](https://github.com/RobynLlama/CodeTalker/tree/main/src/CodeTalker/Examples) in the repo.
 
 ---
