@@ -59,7 +59,7 @@ public static class CodeTalkerNetwork
 
   internal static void OnNetworkMessage(LobbyChatMsg_t message)
   {
-    CodeTalkerPlugin.Log.LogMessage("Called back!");
+    CodeTalkerPlugin.Log.LogDebug("Called back!");
 
     int bufferSize = 10240; //10kb buffer
     byte[] rawData = new byte[bufferSize];
@@ -71,8 +71,8 @@ public static class CodeTalkerNetwork
       return;
 
     data = data.Replace(CODE_TALKER_SIGNATURE, string.Empty);
-    CodeTalkerPlugin.Log.LogMessage($"Heard {ret} from GetLobbyChat. Sender {senderID}, type {messageType}");
-    CodeTalkerPlugin.Log.LogMessage($"Full message: {data}");
+    CodeTalkerPlugin.Log.LogDebug($"Heard {ret} from GetLobbyChat. Sender {senderID}, type {messageType}");
+    CodeTalkerPlugin.Log.LogDebug($"Full message: {data}");
 
     try
     {
@@ -81,7 +81,7 @@ public static class CodeTalkerNetwork
         var inType = packet.GetType();
         if (packetListeners.TryGetValue(inType, out var listener))
         {
-          CodeTalkerPlugin.Log.LogMessage($"Sending an event for type {inType.Name}");
+          CodeTalkerPlugin.Log.LogDebug($"Sending an event for type {inType.Name}");
           listener.Invoke(new(senderID.m_SteamID), packet);
         }
       }
