@@ -12,7 +12,7 @@ namespace CodeTalker;
   listener with CodeTalker. See also: ExamplePacket.cs
 */
 
-[BepInPlugin(LCMPluginInfo.PLUGIN_GUID, LCMPluginInfo.PLUGIN_NAME, LCMPluginInfo.PLUGIN_VERSION)]
+[BepInPlugin("dev.mamallama.CodeTalkerExampleListener", "Code Talker Example", "0.0.1")]
 public class CodeTalkerExamplePlugin : BaseUnityPlugin
 {
   internal static ManualLogSource Log = null!;
@@ -23,7 +23,7 @@ public class CodeTalkerExamplePlugin : BaseUnityPlugin
     Log = Logger;
 
     // Log our awake here so we can see it in LogOutput.txt file
-    Log.LogInfo($"Plugin {LCMPluginInfo.PLUGIN_NAME} version {LCMPluginInfo.PLUGIN_VERSION} is loaded!");
+    Log.LogInfo($"Code talker example is loaded");
 
     CodeTalkerNetwork.RegisterListener<ExamplePacket>(ReceiveExamplePacket);
     Log.LogMessage("Created a packet listener");
