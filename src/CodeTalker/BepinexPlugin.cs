@@ -5,6 +5,9 @@ using Steamworks;
 
 namespace CodeTalker;
 
+/// <summary>
+/// The main Code Talker entry point for BepInEx to load
+/// </summary>
 [BepInPlugin(LCMPluginInfo.PLUGIN_GUID, LCMPluginInfo.PLUGIN_NAME, LCMPluginInfo.PLUGIN_VERSION)]
 public class CodeTalkerPlugin : BaseUnityPlugin
 {

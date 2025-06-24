@@ -2,9 +2,16 @@ using Newtonsoft.Json;
 
 namespace CodeTalker.Packets;
 
+/// <summary>
+/// A container class that stores all packet serialization information
+/// </summary>
 public static class PacketSerializer
 {
-  public static readonly JsonSerializerSettings JSONOptions = new()
+  /// <summary>
+  /// The serialization settings used by Code Talker. Do not modify
+  /// under any circumstance or you will completely destroy the network
+  /// </summary>
+  internal static readonly JsonSerializerSettings JSONOptions = new()
   {
     TypeNameHandling = TypeNameHandling.Objects,
     PreserveReferencesHandling = PreserveReferencesHandling.Objects,
