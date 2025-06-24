@@ -10,6 +10,7 @@ namespace CodeTalker.Networking;
 public static class CodeTalkerNetwork
 {
   public delegate void PacketListener(PacketHeader header, PacketBase packet);
+  internal static string CODE_TALKER_SIGNATURE = "!!CODE_TALKER_NETWORKING!!";
   private static readonly Dictionary<Type, PacketListener> packetListeners = [];
 
   public static bool RegisterListener<T>(PacketListener listener) where T : PacketBase
@@ -28,7 +29,7 @@ public static class CodeTalkerNetwork
 
   public static void SendNetworkPacket(PacketBase packet)
   {
-    var rawPacket = JsonConvert.SerializeObject(packet, PacketSerializer.JSONOptions);
+    var rawPacket = $"{CODE_TALKER_SIGNATURE}{JsonConvert.SerializeObject(packet, PacketSerializer.JSONOptions)}";
     var bytes = Encoding.UTF8.GetBytes(rawPacket);
     SteamMatchmaking.SendLobbyChatMsg(new(SteamLobby._current._currentLobbyID), bytes, bytes.Length);
   }
@@ -43,6 +44,10 @@ public static class CodeTalkerNetwork
     var ret = SteamMatchmaking.GetLobbyChatEntry(new(message.m_ulSteamIDLobby), (int)message.m_iChatID, out var senderID, rawData, bufferSize, out var messageType);
     string data = Encoding.UTF8.GetString(rawData[..ret]);
 
+    if (!data.StartsWith(CODE_TALKER_SIGNATURE))
+      return;
+
+    data = data.Replace(CODE_TALKER_SIGNATURE, string.Empty);
     CodeTalkerPlugin.Log.LogMessage($"Heard {ret} from GetLobbyChat. Sender {senderID}, type {messageType}");
     CodeTalkerPlugin.Log.LogMessage($"Full message: {data}");
 
@@ -60,7 +65,7 @@ public static class CodeTalkerNetwork
     }
     catch (Exception ex)
     {
-      CodeTalkerPlugin.Log.LogError($"Error while hearing network message\n{ex}\n");
+      CodeTalkerPlugin.Log.LogError($"Error while hearing CodeTalker network message\n{ex}\n");
       return;
     }
   }
