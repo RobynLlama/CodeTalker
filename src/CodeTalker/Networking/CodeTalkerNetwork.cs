@@ -63,7 +63,7 @@ public static class CodeTalkerNetwork
   {
     CodeTalkerPlugin.Log.LogDebug("Called back!");
 
-    int bufferSize = 10240; //10kb buffer
+    int bufferSize = 4096; //4kb buffer
     byte[] rawData = new byte[bufferSize];
 
     var ret = SteamMatchmaking.GetLobbyChatEntry(new(message.m_ulSteamIDLobby), (int)message.m_iChatID, out var senderID, rawData, bufferSize, out var messageType);
