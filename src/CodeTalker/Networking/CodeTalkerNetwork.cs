@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using BepInEx.Bootstrap;
 using CodeTalker.Packets;
 using Newtonsoft.Json;
 using Steamworks;
@@ -74,22 +76,55 @@ public static class CodeTalkerNetwork
     CodeTalkerPlugin.Log.LogDebug($"Heard {ret} from GetLobbyChat. Sender {senderID}, type {messageType}");
     CodeTalkerPlugin.Log.LogDebug($"Full message: {data}");
 
+    PacketBase packet;
+    Type inType;
+
+    //We do it this way to make sure we're not blamed for errors
+    //that other networked mods may cause
+
     try
     {
-      if (JsonConvert.DeserializeObject<PacketBase>(data, PacketSerializer.JSONOptions) is PacketBase packet)
+      if (JsonConvert.DeserializeObject<PacketBase>(data, PacketSerializer.JSONOptions) is PacketBase inPacket)
       {
-        var inType = packet.GetType();
-        if (packetListeners.TryGetValue(inType, out var listener))
-        {
-          CodeTalkerPlugin.Log.LogDebug($"Sending an event for type {inType.Name}");
-          listener.Invoke(new(senderID.m_SteamID), packet);
-        }
+        inType = inPacket.GetType();
+        packet = inPacket;
       }
+      else
+        return;
     }
-    catch (Exception ex)
+    catch (Exception)
     {
-      CodeTalkerPlugin.Log.LogError($"Error while hearing CodeTalker network message\n{ex}\n");
+      CodeTalkerPlugin.Log.LogWarning($"A mod has sent a malformed packet to CodeTalker, dropping\n  Abridged Packet data: {data[18..108]}");
       return;
     }
+
+    if (packetListeners.TryGetValue(inType, out var listener))
+    {
+      CodeTalkerPlugin.Log.LogDebug($"Sending an event for type {inType.Name}");
+
+      try
+      {
+        listener.Invoke(new(senderID.m_SteamID), packet);
+      }
+      catch (Exception ex)
+      {
+        var plugins = Chainloader.PluginInfos;
+        var mod = plugins.Values.Where(mod => mod.Instance?.GetType().Assembly == inType.Assembly).FirstOrDefault();
+
+        //Happy lil ternary
+        string modName = mod != null
+          ? $"{mod.Metadata.Name} version {mod.Metadata.Version}"
+          : inType.Assembly.GetName().Name;
+
+        //Big beefin' raw string literal with interpolation
+        CodeTalkerPlugin.Log.LogError($"""
+        The following mod encountered an error while responding to a network packet, please do not report this as a CodeTalker error!
+          Mod: {modName}
+          StackTrace:
+        {ex}
+        """);
+      }
+    }
+
   }
 }
