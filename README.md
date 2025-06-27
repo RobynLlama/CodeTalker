@@ -2,6 +2,8 @@
 
 **CodeTalker** is a lightweight C# networking library designed to simplify sending and receiving custom packets in Atlyss. It allows you to create your own packet types and register callbacks that are automatically invoked when matching packets are received.
 
+**Special Thanks**: ButteredLilly for initial inspiration for the delivery method, thanks!
+
 ## Features
 
 - Define custom packet classes by inheriting from `PacketBase`.
