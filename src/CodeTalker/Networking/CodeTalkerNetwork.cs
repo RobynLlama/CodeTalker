@@ -92,9 +92,43 @@ public static class CodeTalkerNetwork
       else
         return;
     }
-    catch (Exception)
+    catch (JsonReaderException ex)
     {
-      CodeTalkerPlugin.Log.LogWarning($"A mod has sent a malformed packet to CodeTalker, dropping\n  Abridged Packet data: {data[18..108]}");
+      CodeTalkerPlugin.Log.LogDebug($"""
+      Malformed JSON in packet!
+      Stack Trace: 
+        {ex}
+      """);
+      return;
+    }
+    catch (JsonSerializationException ex)
+    {
+      if (ex.Message.Contains("Error resolving type specified in JSON"))
+      {
+        //silently ignore types we don't have, other users may have mods that we don't
+        return;
+      }
+
+      CodeTalkerPlugin.Log.LogDebug($"""
+      Unable to serialize a packet!
+      Stack Trace: 
+        {ex}
+
+      Abridged Packet:
+        {data[18..108]}
+      """);
+      return;
+    }
+    catch (Exception ex)
+    {
+      CodeTalkerPlugin.Log.LogDebug($"""
+      Error while handling a packet!
+      Stack Trace: 
+        {ex}
+
+      Abridged Packet:
+        {data[18..108]}
+      """);
       return;
     }
 
