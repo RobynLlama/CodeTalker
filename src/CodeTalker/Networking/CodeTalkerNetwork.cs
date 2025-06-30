@@ -109,7 +109,7 @@ public static class CodeTalkerNetwork
       """);
       return;
     }
-    catch (JsonSerializationException ex)
+    catch (JsonSerializationException)
     {
       //Silently ignore this unless debugging
       if (!dbg)
@@ -119,8 +119,6 @@ public static class CodeTalkerNetwork
       Unable to serialize a packet!
       This may be because our mods differ from the sender's!
       Stack Trace: 
-        {ex}
-
       Abridged Packet:
         {data[18..108]}
       """);
@@ -130,9 +128,7 @@ public static class CodeTalkerNetwork
     {
       CodeTalkerPlugin.Log.LogDebug($"""
       Error while handling a packet!
-      Stack Trace: 
-        {ex}
-
+      Exception: {ex.GetType().Name}
       Abridged Packet:
         {data[18..108]}
       """);
