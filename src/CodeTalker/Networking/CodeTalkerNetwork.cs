@@ -61,7 +61,10 @@ public static class CodeTalkerNetwork
 
   internal static void OnNetworkMessage(LobbyChatMsg_t message)
   {
-    CodeTalkerPlugin.Log.LogDebug("Called back!");
+    bool dbg = CodeTalkerPlugin.EnablePacketDebugging.Value;
+
+    if (dbg)
+      CodeTalkerPlugin.Log.LogDebug("Called back!");
 
     int bufferSize = 4096; //4kb buffer
     byte[] rawData = new byte[bufferSize];
@@ -73,8 +76,12 @@ public static class CodeTalkerNetwork
       return;
 
     data = data.Replace(CODE_TALKER_SIGNATURE, string.Empty);
-    CodeTalkerPlugin.Log.LogDebug($"Heard {ret} from GetLobbyChat. Sender {senderID}, type {messageType}");
-    CodeTalkerPlugin.Log.LogDebug($"Full message: {data}");
+    if (dbg)
+    {
+      CodeTalkerPlugin.Log.LogDebug($"Heard {ret} from GetLobbyChat. Sender {senderID}, type {messageType}");
+      CodeTalkerPlugin.Log.LogDebug($"Full message: {data}");
+    }
+
 
     PacketBase packet;
     Type inType;
@@ -92,25 +99,25 @@ public static class CodeTalkerNetwork
       else
         return;
     }
-    catch (JsonReaderException ex)
+    catch (JsonReaderException)
     {
-      CodeTalkerPlugin.Log.LogDebug($"""
+      CodeTalkerPlugin.Log.LogWarning($"""
       Malformed JSON in packet!
-      Stack Trace: 
-        {ex}
+      Abridged Packet:
+        {data[18..108]}
+
       """);
       return;
     }
     catch (JsonSerializationException ex)
     {
-      if (ex.Message.Contains("Error resolving type specified in JSON"))
-      {
-        //silently ignore types we don't have, other users may have mods that we don't
+      //Silently ignore this unless debugging
+      if (!dbg)
         return;
-      }
 
       CodeTalkerPlugin.Log.LogDebug($"""
       Unable to serialize a packet!
+      This may be because our mods differ from the sender's!
       Stack Trace: 
         {ex}
 
@@ -134,7 +141,8 @@ public static class CodeTalkerNetwork
 
     if (packetListeners.TryGetValue(inType, out var listener))
     {
-      CodeTalkerPlugin.Log.LogDebug($"Sending an event for type {inType.Name}");
+      if (dbg)
+        CodeTalkerPlugin.Log.LogDebug($"Sending an event for type {inType.Name}");
 
       try
       {
