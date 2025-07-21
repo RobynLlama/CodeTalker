@@ -23,6 +23,9 @@ public static class CodeTalkerNetwork
   internal static string CODE_TALKER_SIGNATURE = "!!CODE_TALKER_NETWORKING!!";
   private static readonly Dictionary<Type, PacketListener> packetListeners = [];
 
+  internal static string GetTypeNameString(Type type) =>
+    $"{type.Assembly.GetName().Name},{type.DeclaringType?.Name ?? "NONE"}:{type.Namespace ?? "NONE"}.{type.Name}";
+
   /// <summary>
   /// Registers a listener by packet type. Code Talker will call
   /// your listener when the specific System.Type is created from
