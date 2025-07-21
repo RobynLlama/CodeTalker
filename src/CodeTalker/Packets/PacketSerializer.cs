@@ -16,5 +16,7 @@ public static class PacketSerializer
     TypeNameHandling = TypeNameHandling.Objects,
     PreserveReferencesHandling = PreserveReferencesHandling.Objects,
     Formatting = Formatting.None,
+    NullValueHandling = NullValueHandling.Ignore,
+    DefaultValueHandling = DefaultValueHandling.Ignore
   };
 }
