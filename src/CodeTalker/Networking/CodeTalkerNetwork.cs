@@ -20,7 +20,13 @@ public static class CodeTalkerNetwork
   /// <param name="header">The received packet's header</param>
   /// <param name="packet">The received packet's body</param>
   public delegate void PacketListener(PacketHeader header, PacketBase packet);
-  internal static string CODE_TALKER_SIGNATURE = "!!CODE_TALKER_NETWORKING!!";
+
+  /// <summary>
+  /// This should only be modified for BREAKING changes in packet structure
+  /// </summary>
+  private const ushort NETWORK_PACKET_VERSION = 2;
+
+  internal static string CODE_TALKER_SIGNATURE = $"!!CODE_TALKER_NETWORKING:PV{NETWORK_PACKET_VERSION}!!";
   private static readonly Dictionary<Type, PacketListener> packetListeners = [];
 
   internal static string GetTypeNameString(Type type) =>
