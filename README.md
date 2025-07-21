@@ -4,6 +4,10 @@
 
 **Special Thanks**: ButteredLilly for initial inspiration for the delivery method, thanks!
 
+## Warning
+
+Whenever a packet version update is applied you will be unable to communicate with clients not running the same version as you. If you are not seeing other user's packets then ensure you are running the latest version of CodeTalker!
+
 ## Features
 
 - Define custom packet classes by inheriting from `PacketBase`.

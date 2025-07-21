@@ -1,7 +1,7 @@
 {
   "name": "CodeTalker",
   "description": "A simple library to abstract away networking",
-  "version_number": "1.1.4",
+  "version_number": "1.2.0",
   "dependencies": [],
   "website_url": "https://github.com/RobynLlama/CodeTalker"
 }
